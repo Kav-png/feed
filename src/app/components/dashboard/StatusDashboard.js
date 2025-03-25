@@ -33,9 +33,9 @@ const ProductionDashboard = () => {
     overallStatus: "AMBER",
     timestamp: "Friday, March 21 2025 10:07:02 GMT",
     regions: [
-      { name: "APAC", time: "(07:00 SGT)" },
-      { name: "EMEA", time: "(07:00 UTC)" },
-      { name: "AMER", time: "(07:00 ET)" },
+      { name: "APAC", time: "07:00 SGT" },
+      { name: "EMEA", time: "07:00 UTC" },
+      { name: "AMER", time: "07:00 ET" },
     ],
     coreInfra: [
       { name: "Network Services", status: "GREEN" },
@@ -253,69 +253,86 @@ const ProductionDashboard = () => {
         </div>
       </div>
 
-      {/* Regions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {dashboardData.regions.map((region, idx) => (
-          <div
-            key={idx}
-            className="bg-white p-4 rounded-lg shadow-sm text-center"
-          >
-            <h3 className="font-medium text-gray-700">{region.name}</h3>
-            <p className="text-sm text-gray-500">{region.time}</p>
-          </div>
-        ))}
-      </div>
-
       {/* Main Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {/* Core Technology Infra */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="bg-gray-100 p-3 border-g">
-            <h2 className="font-semibold text-gray-700">
-              Core Technology Infra
-            </h2>
-          </div>
-          <div className="divide-y divide-gray-100">
-            {dashboardData.coreInfra.map((item, idx) => (
-              <div key={idx} className="flex justify-between items-center p-3">
-                <span className="text-sm text-gray-700">{item.name}</span>
-                <StatusBadge status={item.status} />
-              </div>
-            ))}
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        {/* Regions Column */}
+        <div className="md:col-end-1 flex flex-col justify-between">
+          {dashboardData.regions.map((region, idx) => (
+            <div
+              key={idx}
+              className="bg-white p-4 rounded-lg shadow-sm text-center mb-4 md:mb-0"
+              style={{
+                height: "calc(33.33% - 1rem)", // Ensures equal height for each region card
+                maxWidth: "90%", // Reduces the width of the region column
+                margin: "0 auto", // Centers the region cards horizontally
+              }}
+            >
+              <h3 className="font-medium text-gray-700">{region.name}</h3>
+              <p className="text-xs text-gray-500">{region.time}</p>
+            </div>
+          ))}
         </div>
 
-        {/* Front End Technology Infra */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="bg-gray-100 p-3 border-g">
-            <h2 className="font-semibold text-gray-700">
-              Front End Technology Infra
-            </h2>
+        {/* Technology Infrastructure Tables */}
+        <div className="md:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Core Technology Infra */}
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-gray-100 p-3 border-g">
+              <h2 className="font-semibold text-gray-700">
+                Core Technology Infra
+              </h2>
+            </div>
+            <div className="divide-y divide-gray-100">
+              {dashboardData.coreInfra.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex justify-between items-center p-3"
+                >
+                  <span className="text-sm text-gray-700">{item.name}</span>
+                  <StatusBadge status={item.status} />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="divide-y divide-gray-100">
-            {dashboardData.frontEndInfra.map((item, idx) => (
-              <div key={idx} className="flex justify-between items-center p-3">
-                <span className="text-sm text-gray-700">{item.name}</span>
-                <StatusBadge status={item.status} />
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Business Application Portfolio */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="bg-gray-100 p-3 border-g">
-            <h2 className="font-semibold text-gray-700">
-              Business Application Portfolio
-            </h2>
+          {/* Front End Technology Infra */}
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-gray-100 p-3 border-g">
+              <h2 className="font-semibold text-gray-700">
+                Front End Technology Infra
+              </h2>
+            </div>
+            <div className="divide-y divide-gray-100">
+              {dashboardData.frontEndInfra.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex justify-between items-center p-3"
+                >
+                  <span className="text-sm text-gray-700">{item.name}</span>
+                  <StatusBadge status={item.status} />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="divide-y divide-gray-100">
-            {dashboardData.businessApplications.map((item, idx) => (
-              <div key={idx} className="flex justify-between items-center p-3">
-                <span className="text-sm text-gray-700">{item.name}</span>
-                <StatusBadge status={item.status} />
-              </div>
-            ))}
+
+          {/* Business Application Portfolio */}
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-gray-100 p-3 border-g">
+              <h2 className="font-semibold text-gray-700">
+                Business Application Portfolio
+              </h2>
+            </div>
+            <div className="divide-y divide-gray-100">
+              {dashboardData.businessApplications.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex justify-between items-center p-3"
+                >
+                  <span className="text-sm text-gray-700">{item.name}</span>
+                  <StatusBadge status={item.status} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -379,7 +396,7 @@ const ProductionDashboard = () => {
                                     : sev === "3"
                                     ? "#fff8e1"
                                     : "#f1f8e9"
-                                  : "transparent",
+                                  : "#f5f5f5",
                               color:
                                 count > 0
                                   ? sev === "1-2"
@@ -446,7 +463,7 @@ const ProductionDashboard = () => {
                           }`}
                           style={{
                             backgroundColor:
-                              changeStats > 0 ? "#e3f2fd" : "transparent",
+                              changeStats > 0 ? "#e3f2fd" : "#f5f5f5",
                             color: changeStats > 0 ? "#1e88e5" : "#9e9e9e",
                           }}
                         >

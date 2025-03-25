@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Navbar from "./components/Navbar";
 import StatusDashboard from "./components/dashboard/StatusDashboard";
 import NewsBanner from "./components/NewsBanner";
 import Sidebar from "./components/dashboard/Sidebar";
@@ -83,8 +84,11 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Navbar */}
+      {/* <Navbar /> */}
+
       {/* News Banner */}
-      <NewsBanner newsItems={newsItems} />
+      {/* <NewsBanner newsItems={newsItems} /> */}
 
       <div className="flex flex-1">
         {/* Sidebar */}
