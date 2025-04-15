@@ -155,6 +155,7 @@ const ProductionDashboard = () => {
           incident.division.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
+    dat;
 
     // Filter by severity
     if (severityFilter) {
