@@ -1,6 +1,90 @@
 "use client";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, AlertTriangle, Zap } from "lucide-react";
 import React, { useState } from "react";
+import { Line } from "react-chartjs-2"; // If using react-chartjs-2, else use a simple div for dummy
+
+const dummySeverityPrediction = (incident) => {
+  // Dummy logic: If title contains "power" or "stuck", predict high severity
+  if (/power|stuck/i.test(incident.title))
+    return { severity: 1, confidence: 0.92 };
+  if (/latency|delay/i.test(incident.title))
+    return { severity: 3, confidence: 0.75 };
+  return { severity: 4, confidence: 0.6 };
+};
+
+const dummyAnomalies = [
+  {
+    type: "Spike in Incidents",
+    division: "Technology Services",
+    detectedAt: "2025-03-21 09:00",
+    description: "Unusual spike in incidents detected for Technology Services.",
+  },
+];
+
+const dummyRootCauseSuggestions = (incident) => {
+  // Dummy logic: Suggest root causes based on keywords
+  if (/power/i.test(incident.title))
+    return ["Utility Power Failure", "DNO Issue"];
+  if (/latency|delay/i.test(incident.title))
+    return ["Network Congestion", "Mail Server Delay"];
+  if (/Teams/i.test(incident.title))
+    return ["Microsoft Teams Outage", "Telephony Service Issue"];
+  return ["No suggestion"];
+};
+
+// --- Dummy ML/AI Functions ---
+
+// 4. Incident Resolution Time Estimation
+const dummyResolutionTimeEstimation = (incident) => {
+  // Dummy logic: Estimate based on severity
+  if (incident.severity <= 2) return "2 hours";
+  if (incident.severity === 3) return "6 hours";
+  if (incident.severity === 4) return "1 day";
+  return "3 days";
+};
+
+// 5. Change Impact Analysis
+const dummyChangeImpact = (division) => {
+  // Dummy logic: Highlight "Technology Services" as high risk
+  if (division === "Technology Services")
+    return { risk: "High", reason: "Recent spike in incidents" };
+  if (division === "Investment Bank")
+    return { risk: "Medium", reason: "Moderate change volume" };
+  return { risk: "Low", reason: "Stable history" };
+};
+
+// 6. Automated Incident Categorization
+const dummyIncidentCategory = (incident) => {
+  if (/power|utility/i.test(incident.title)) return "Infrastructure";
+  if (/Teams|mail|latency|delay/i.test(incident.title)) return "Application";
+  if (/trade|brokerage|payments/i.test(incident.title))
+    return "Business Process";
+  return "Other";
+};
+
+const dummySentiment = (incident) => {
+  // Dummy: negative if "unable", "stuck", "delay", else neutral/positive
+  if (/unable|stuck|delay|dropped|not processed/i.test(incident.title))
+    return { sentiment: "Negative", color: "#ef5350" };
+  if (/success|restored|resolved/i.test(incident.title))
+    return { sentiment: "Positive", color: "#7cb342" };
+  return { sentiment: "Neutral", color: "#ffb74d" };
+};
+
+const dummyTrendForecast = {
+  labels: [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun",
+    "Next Mon",
+    "Next Tue",
+  ],
+  data: [5, 7, 6, 8, 9, 7, 6, 10, 12], // Last 7 days + next 2 days (forecast)
+};
 
 const ProductionDashboard = () => {
   const [selectedDivision, setSelectedDivision] = useState(null);
@@ -155,7 +239,6 @@ const ProductionDashboard = () => {
           incident.division.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    dat;
 
     // Filter by severity
     if (severityFilter) {
@@ -230,8 +313,34 @@ const ProductionDashboard = () => {
     );
   };
 
+  // --- AI/ML Feature: Anomaly Alerts ---
+  const renderAnomalyAlerts = () => (
+    <div className="mb-6">
+      {dummyAnomalies.map((anomaly, idx) => (
+        <div
+          key={idx}
+          className="flex items-center bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-2 rounded"
+        >
+          <AlertTriangle className="text-yellow-500 mr-2" size={20} />
+          <div>
+            <span className="font-semibold text-yellow-800">
+              {anomaly.type}:{" "}
+            </span>
+            <span className="text-yellow-700">{anomaly.description}</span>
+            <span className="block text-xs text-yellow-600">
+              Division: {anomaly.division} | Detected: {anomaly.detectedAt}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="w-full min-h-screen bg-gray-50 p-4">
+      {/* --- AI/ML Feature: Anomaly Alerts --- */}
+      {renderAnomalyAlerts()}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-4 rounded-lg shadow-sm">
         <div className="mb-4 md:mb-0">
@@ -469,6 +578,21 @@ const ProductionDashboard = () => {
                           }}
                         >
                           {changeStats}
+                          {/* --- AI/ML Feature: Change Impact Analysis --- */}
+                          <div className="text-xs mt-1">
+                            <span
+                              className={
+                                dummyChangeImpact(division).risk === "High"
+                                  ? "text-red-600"
+                                  : dummyChangeImpact(division).risk ===
+                                    "Medium"
+                                  ? "text-yellow-700"
+                                  : "text-green-700"
+                              }
+                            >
+                              {dummyChangeImpact(division).risk} Risk
+                            </span>
+                          </div>
                         </div>
                       </td>
                     );
@@ -477,6 +601,42 @@ const ProductionDashboard = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* --- AI/ML Feature: Incident Trend Forecasting --- */}
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+        <div className="bg-gray-100 p-3 border-g">
+          <h2 className="font-semibold text-gray-700">
+            Incident Trend Forecast
+          </h2>
+        </div>
+        <div className="p-4">
+          {/* Replace with a real chart if you have charting libs */}
+          <div className="w-full h-32 flex items-end space-x-2">
+            {dummyTrendForecast.data.map((val, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                <div
+                  style={{
+                    height: `${val * 10}px`,
+                    width: "16px",
+                    background: idx >= 7 ? "#90caf9" : "#1976d2",
+                    borderRadius: "4px 4px 0 0",
+                    marginBottom: "4px",
+                  }}
+                ></div>
+                <span className="text-xs text-gray-500">
+                  {dummyTrendForecast.labels[idx]}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="text-xs text-gray-500 mt-2">
+            <span className="font-semibold text-blue-700">Blue</span>: Actual
+            &nbsp;|&nbsp;
+            <span className="font-semibold text-blue-300">Light Blue</span>:
+            Forecast
+          </div>
         </div>
       </div>
 
@@ -650,34 +810,83 @@ const ProductionDashboard = () => {
                       ))}
                   </div>
                 </th>
+                {/* <th className="px-4 py-2">AI Severity Prediction</th> */}
+                <th className="px-4 py-2">AI Root Cause Suggestions</th>
+                <th className="px-4 py-2">AI Resolution ETA</th>
+                <th className="px-4 py-2">AI Category</th>
+                <th className="px-4 py-2">AI Sentiment</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedIncidents.map((incident, idx) => (
-                <tr key={idx} className="border-g hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-700">
-                    {incident.division}
-                  </td>
-                  <td className="px-4 py-3">
-                    <SeverityBadge severity={incident.severity} />
-                  </td>
-                  <td className="px-4 py-3 text-blue-600">{incident.id}</td>
-                  <td className="px-4 py-3 text-gray-700 max-w-md truncate">
-                    {incident.title}
-                  </td>
-                  <td className="px-4 py-3 text-gray-500">
-                    {incident.duration}
-                  </td>
-                </tr>
-              ))}
+              {paginatedIncidents.map((incident, idx) => {
+                const prediction = dummySeverityPrediction(incident);
+                const rootCauses = dummyRootCauseSuggestions(incident);
+                const resolutionETA = dummyResolutionTimeEstimation(incident); // 4
+                const incidentCategory = dummyIncidentCategory(incident); // 6
+                const sentiment = dummySentiment(incident);
+                return (
+                  <tr key={idx} className="border-g hover:bg-gray-50">
+                    <td className="px-4 py-3 font-medium text-gray-700">
+                      {incident.division}
+                    </td>
+                    <td className="px-4 py-3">
+                      <SeverityBadge severity={incident.severity} />
+                    </td>
+                    <td className="px-4 py-3 text-blue-600">{incident.id}</td>
+                    <td className="px-4 py-3 text-gray-700 max-w-md truncate">
+                      {incident.title}
+                    </td>
+                    <td className="px-4 py-3 text-gray-500">
+                      {incident.duration}
+                    </td>
+                    {/* --- AI/ML Feature: Severity Prediction --- */}
+                    {/* <td className="px-4 py-3 text-gray-700">
+                      <span className="flex items-center">
+                        <Zap className="text-blue-400 mr-1" size={16} />
+                        <span>
+                          {`Severity ${prediction.severity} `}
+                          <span className="text-xs text-gray-500">
+                            ({Math.round(prediction.confidence * 100)}%)
+                          </span>
+                        </span>
+                      </span>
+                    </td> */}
+                    {/* --- AI/ML Feature: Root Cause Suggestions --- */}
+                    <td className="px-4 py-3 text-gray-700">
+                      {rootCauses.map((cause, i) => (
+                        <div key={i} className="text-xs">
+                          {cause}
+                        </div>
+                      ))}
+                    </td>
+                    {/* AI Resolution ETA */}
+                    <td className="px-4 py-3 text-gray-700">{resolutionETA}</td>
+                    {/* AI Category */}
+                    <td className="px-4 py-3 text-gray-700">
+                      {incidentCategory}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className="px-2 py-1 rounded text-xs font-semibold"
+                        style={{
+                          backgroundColor: sentiment.color,
+                          color: "#fff",
+                        }}
+                        title={sentiment.sentiment}
+                      >
+                        {sentiment.sentiment}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
               {paginatedIncidents.length === 0 && (
                 <tr>
                   <td
-                    colSpan="5"
+                    colSpan="7"
                     className="px-4 py-3 text-center text-gray-500"
-                  >
-                    No incidents found
-                  </td>
+                  ></td>
+                  No incidents found
                 </tr>
               )}
             </tbody>
@@ -740,6 +949,39 @@ const ProductionDashboard = () => {
               Severity 4-5 or no incidents
             </span>
           </div>
+        </div>
+      </div>
+
+      {/* --- AI/ML Feature: Conversational AI Assistant (UI Placeholder) --- */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: "24px",
+          right: "24px",
+          zIndex: 1000,
+          width: "320px",
+          background: "#fff",
+          borderRadius: "12px",
+          boxShadow: "0 2px 16px rgba(0,0,0,0.15)",
+          border: "1px solid #e0e0e0",
+          padding: "16px",
+        }}
+      >
+        <div className="font-semibold text-gray-700 mb-2 flex items-center">
+          <Zap size={18} className="mr-2 text-blue-400" />
+          Smart Assistant
+        </div>
+        <div className="text-xs text-gray-600 mb-2">
+          <em>Ask about incidents, trends, or get recommendations!</em>
+        </div>
+        <input
+          type="text"
+          className="w-full border rounded px-2 py-1 text-sm mb-2"
+          placeholder="Type your question..."
+          disabled
+        />
+        <div className="text-xs text-gray-400">
+          (Demo only. AI chat coming soon!)
         </div>
       </div>
     </div>
