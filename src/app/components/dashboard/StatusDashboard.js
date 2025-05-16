@@ -99,6 +99,30 @@ const ProductionDashboard = () => {
     direction: "ascending",
   });
 
+  const dummyRecommendations = () => [
+    {
+      type: "Monitoring",
+      message:
+        "Increase monitoring for Technology Services due to recent spike in incidents.",
+      division: "Technology Services",
+      severity: "High",
+    },
+    {
+      type: "Maintenance",
+      message:
+        "Schedule preventive maintenance for Office 365 mail delivery systems.",
+      division: "Technology Services",
+      severity: "Medium",
+    },
+    {
+      type: "Awareness",
+      message:
+        "Notify Investment Bank teams about potential trade processing delays.",
+      division: "Investment Bank",
+      severity: "Low",
+    },
+  ];
+
   // Status colors - using lighter modern palette
   const statusColors = {
     GREEN: "#7cb342",
@@ -637,6 +661,42 @@ const ProductionDashboard = () => {
             <span className="font-semibold text-blue-300">Light Blue</span>:
             Forecast
           </div>
+        </div>
+      </div>
+
+      {/* --- AI/ML Feature: Automated Recommendations --- */}
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+        <div className="bg-gray-100 p-3 border-g flex items-center">
+          <Zap size={18} className="mr-2 text-blue-400" />
+          <h2 className="font-semibold text-gray-700">AI Recommendations</h2>
+        </div>
+        <div className="p-4">
+          {dummyRecommendations().map((rec, idx) => (
+            <div
+              key={idx}
+              className="mb-3 p-3 rounded border-l-4"
+              style={{
+                borderColor:
+                  rec.severity === "High"
+                    ? "#ef5350"
+                    : rec.severity === "Medium"
+                    ? "#ffb74d"
+                    : "#7cb342",
+                background:
+                  rec.severity === "High"
+                    ? "#ffebee"
+                    : rec.severity === "Medium"
+                    ? "#fff8e1"
+                    : "#f1f8e9",
+              }}
+            >
+              <div className="font-semibold text-gray-800">{rec.type}</div>
+              <div className="text-gray-700 text-sm">{rec.message}</div>
+              <div className="text-xs text-gray-500 mt-1">
+                Division: {rec.division} &nbsp;|&nbsp; Severity: {rec.severity}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
